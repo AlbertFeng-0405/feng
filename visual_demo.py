@@ -24,6 +24,28 @@ def viewing_box(list):
     for i in [0,4]:
         spacial_line(list[i][0],list[i+3][0],list[i][1],list[i+3][1],list[i][2],list[i+3][2])
 
+def cal_volume(b_list):
+    '''
+    calculate volume of viewing cone
+    '''
+    center_0 = sum(np.array(b_list[:4]))/4
+    center_1 = sum(np.array(b_list[4:]))/4
+
+    height = np.linalg.norm(center_1-center_0)
+
+    a_0 = np.linalg.norm(np.array(b_list[1])-np.array(b_list[0]))
+    b_0 = np.linalg.norm(np.array(b_list[2])-np.array(b_list[1]))
+
+    a_1 = np.linalg.norm(np.array(b_list[5])-np.array(b_list[4]))
+    b_1 = np.linalg.norm(np.array(b_list[6])-np.array(b_list[5]))
+
+    S_0 = a_0*b_0
+    S_1 = a_1*b_1
+
+    volume = height*(S_0+S_1)/2
+
+    return volume
+ 
 if __name__ == '__main__':
     bounding_list = [[0,0,0],
     [8,0,0],
@@ -35,4 +57,6 @@ if __name__ == '__main__':
     [2,4,8]]
 
     viewing_box(bounding_list)
+    v = cal_volume(bounding_list)
+    print(v)
     plt.show()
