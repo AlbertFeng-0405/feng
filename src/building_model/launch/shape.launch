@@ -1,0 +1,5 @@
+<launch>
+        <arg name="shape" />
+        <node name="shape" pkg="building_model" type="basic_shapes" />
+        <node name="rviz" pkg="rviz" type="rviz" />
+</launch>

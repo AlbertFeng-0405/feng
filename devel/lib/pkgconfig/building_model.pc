@@ -1,0 +1,8 @@
+prefix=/home/albert/planning_ws/devel
+
+Name: building_model
+Description: Description of building_model
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

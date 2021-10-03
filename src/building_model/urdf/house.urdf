@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<robot name="myhouse">
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://building_model/meshes/Farm_house.dae" />
+            </geometry>
+            <material name="black">
+                <color rgba="0.7 0.5 0 0.5" />
+            </material>
+        </visual>
+    </link>
+</robot>

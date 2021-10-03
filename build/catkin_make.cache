@@ -1,0 +1,2 @@
+building_model
+-DCATKIN_DEVEL_PREFIX=/home/albert/planning_ws/devel -DCMAKE_INSTALL_PREFIX=/home/albert/planning_ws/install -G Unix Makefiles

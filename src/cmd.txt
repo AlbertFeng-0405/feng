@@ -1,0 +1,1 @@
+rosrun tf static_transform_publisher 0.0 0.0 0.0 0.0 0.0 0.0 map base_link 100 #rviz 初始化坐标命令 在roslaunch前执行
