@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy.lib.function_base import gradient
 import sympy as sp
 
 
@@ -138,20 +139,6 @@ def smoothing_base_bezier(date_x, date_y, k=0.5, inserted=10, closed=False):
 
     return out.T[0], out.T[1]
 
-def plot_sim(coefficient):
-    plt.figure()
-    plt.xlim(1,5)
-    plt.ylim(1,5)
-    x = np.arange(2,4,0.1)
-    y = np.polyval(coefficient,x)
-    plt.plot(x,y,'r')
-    plt.show()
-
-def cal_gradient(P):
-    Q = np.polyder(P)
-    
-    return Q
-
 if __name__ == '__main__':
     x = np.array([2, 4, 4, 3, 2])
     y = np.array([2, 2, 4, 3, 4])
@@ -160,13 +147,8 @@ if __name__ == '__main__':
     plt.xlim(1,5)
     plt.ylim(1,5)
     x_curve, y_curve = smoothing_base_bezier(x, y, k=0.3, closed=True)
-    print(len(x_curve))
+    print(x_curve)
     print(len(y_curve))
-    f1 = np.polyfit(x_curve[:12], y_curve[:12], 4)
-    print(f1)
-    print(cal_gradient(f1))
-    print(np.polyval(cal_gradient(f1),2))
     plt.plot(x_curve, y_curve, label='$k=0.3$')
     plt.legend(loc='best')
-    plot_sim(f1)
     plt.show()
