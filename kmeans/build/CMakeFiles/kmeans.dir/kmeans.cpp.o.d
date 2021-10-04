@@ -1,6 +1,7 @@
 CMakeFiles/kmeans.dir/kmeans.cpp.o: \
- /home/albert/learn_cpp/kmeans/kmeans.cpp /usr/include/stdc-predef.h \
- /home/albert/learn_cpp/kmeans/head.h /usr/include/c++/8/iostream \
+ /home/albert/pointcloud_process/kmeans/kmeans.cpp \
+ /usr/include/stdc-predef.h /home/albert/pointcloud_process/kmeans/head.h \
+ /usr/include/c++/8/iostream \
  /usr/include/x86_64-linux-gnu/c++/8/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/8/bits/os_defines.h \
  /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \

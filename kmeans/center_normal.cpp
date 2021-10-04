@@ -19,14 +19,91 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cmath>
+#include <cstdlib>
 
+bool judge_in_out(Eigen::Vector3d v_1, Eigen::Vector3d v_2, Eigen::Vector3d v_ref){
+    double inner_1 = v_1.dot(v_ref) /(v_1.norm()*v_ref.norm());
+    double angleNew_1 = acos(inner_1) * 180 / M_PI;
+    //std::cout << "angle_1:" << angleNew_1 << std::endl;
+
+    double inner_2 = v_2.dot(v_ref) /(v_2.norm()*v_ref.norm());
+    double angleNew_2 = acos(inner_2) * 180 / M_PI;
+    //std::cout << "angle_2:" << angleNew_2 << std::endl;
+
+    if (angleNew_1<=angleNew_2){
+        return true;
+    }
+    if (angleNew_1>angleNew_2){
+        return false;
+    }
+}
+
+void getpts(std::string path, std::vector<double>& lines){
+	ifstream infile_feat(path);
+    std::string feature; //存储读取的每行数据
+	float feat_onePoint;  //存储每行按空格分开的每一个float数据
+	lines.clear();
+
+	while(!infile_feat.eof()) 
+	{	
+		getline(infile_feat, feature); //一次读取一行数据
+		std::stringstream ss(feature); //使用串流实现对string的输入输出操作
+		while (ss >> feat_onePoint) {      //按空格一次读取一个数据存入feat_onePoint 
+			lines.push_back(feat_onePoint); //存储每行按空格分开的数据 
+		}
+	}
+	infile_feat.close();
+}
+
+float sampling_config(Eigen::Vector3d normal, std::vector<double> center_position, int seed){
+    Eigen::Vector2f direction(normal(0),normal(2));
+    Eigen::Vector2f sample_vec;
+    
+    float s_x, s_z, yaw; //because up axis is y_axis
+    srand(seed); 
+    s_x = (float)50*rand()/float(RAND_MAX)-25;//sample range 50 x 50 m^2
+    s_z = (float)50*rand()/float(RAND_MAX)-25;
+    yaw = (rand() / float(RAND_MAX))*2*M_PI;
+
+    sample_vec(0) = s_x-direction(0);
+    sample_vec(1) = s_z-direction(1);
+    while (sample_vec.norm()>4.5 || (acos(direction.dot(sample_vec) /(direction.norm()*sample_vec.norm())) * 180 / M_PI)>30.0){
+      seed += 1;
+      srand(seed); 
+      s_x = (float)50*rand()/float(RAND_MAX)-25;//sample range 50 x 50 m^2
+      s_z = (float)50*rand()/float(RAND_MAX)-25;
+      yaw = (rand() / float(RAND_MAX))*2*M_PI;
+    }
+
+    return s_x, s_z, yaw;
+}
+
+bool judge_in_frustum(Eigen::Vector3f pc_pt, Eigen::Vector3f config, float yaw_angle){// judege if point from this cluster can be seen by UAV
+    Eigen::Vector3f fov_normal(cos(yaw_angle), 0.0, sin(yaw_angle));
+    Eigen::Vector3f check_vec = pc_pt - config;
+
+    float included_angle = acos(check_vec.dot(fov_normal) /(check_vec.norm()*fov_normal.norm())) * 180 / M_PI;
+    
+    if (check_vec.norm()<6.0 && included_angle<30.0){
+        return true;
+    }
+    return false;
+}
 
 int main(int argc,char **argv){
     //ofstream OutFile("/home/albert/learn_cpp/kmeans/build/center.txt");
-    
+    Eigen::Vector3d z_direction(0.0,1.0,0.0); // for this house.obj, phisical z_axis is y_axis in model. Temp pending for demo test.
+    std::vector<double> ref_vec;
+    std::string ref_path;
+	ref_path = "/home/albert/pointcloud_process/kmeans/build/ref.txt";
+    getpts(ref_path, ref_vec);
+
     for(int i=1; i<=50; i++){
     std::vector<double> center;
-    std::string cloud_name = "/home/albert/learn_cpp/kmeans/build/b-"+std::to_string(i)+".pcd";
+    Eigen::Vector3d refv(ref_vec[3*(i-1)], ref_vec[3*(i-1)+1], ref_vec[3*(i-1)+2]);
+
+    std::string cloud_name = "/home/albert/pointcloud_process/kmeans/build/b-"+std::to_string(i)+".pcd";
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
 
@@ -76,10 +153,25 @@ int main(int argc,char **argv){
         t1 = val(2, 2);
     }
 
-    Eigen::Vector3f v(vec(0, ii), vec(1, ii), vec(2, ii));
+    Eigen::Vector3d v(vec(0, ii), vec(1, ii), vec(2, ii));
     v /= v.norm();
 
-    std::cout<< "Principlal direction:" << v << std::endl;
+    Eigen::Vector3d waiting_1 = z_direction.cross(v);
+    Eigen::Vector3d waiting_2 = v.cross(z_direction);
+
+    bool flag;
+    flag = judge_in_out(waiting_1, waiting_2, refv);
+    Eigen::Vector3d face_normal;
+    if (flag){
+        face_normal = waiting_1;
+    }
+    if (!flag){
+        face_normal = waiting_2;
+    }// decide the normal of this cluster
+
+    std::cout << "normal:" << face_normal << std::endl;
+
+    //std::cout<< "Principlal direction:" << v << std::endl;
 
     std::stringstream result;
     std::copy(center.begin(), center.end(), std::ostream_iterator<float>(result, " "));

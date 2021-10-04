@@ -12,6 +12,7 @@ add_definitions(${PCL_DEFINITIONS})
 add_executable(pcl_test pcl_test.cpp)
 add_executable(pc_cluster pc_cluster.cpp)
 add_executable(show_cluster show_cluster.cpp)
+add_executable(first first.cpp)
  
 target_link_libraries (pcl_test ${PCL_LIBRARIES})
 target_link_libraries (pc_cluster ${PCL_LIBRARIES})

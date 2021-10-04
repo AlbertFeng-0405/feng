@@ -12,6 +12,7 @@ find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 add_definitions(${EIGEN_DEFINITIONS})
 
+
 add_executable (kmeans kmeans.cpp)
 add_executable (center_normal center_normal.cpp)
 target_link_libraries (kmeans ${PCL_LIBRARIES})

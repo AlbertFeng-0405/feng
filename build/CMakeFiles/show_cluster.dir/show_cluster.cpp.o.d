@@ -1,6 +1,6 @@
 CMakeFiles/show_cluster.dir/show_cluster.cpp.o: \
- /home/albert/learn_cpp/show_cluster.cpp /usr/include/stdc-predef.h \
- /usr/include/c++/8/iostream \
+ /home/albert/pointcloud_process/show_cluster.cpp \
+ /usr/include/stdc-predef.h /usr/include/c++/8/iostream \
  /usr/include/x86_64-linux-gnu/c++/8/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/8/bits/os_defines.h \
  /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \

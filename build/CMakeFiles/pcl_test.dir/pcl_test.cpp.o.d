@@ -1,5 +1,5 @@
 CMakeFiles/pcl_test.dir/pcl_test.cpp.o: \
- /home/albert/learn_cpp/pcl_test.cpp /usr/include/stdc-predef.h \
+ /home/albert/pointcloud_process/pcl_test.cpp /usr/include/stdc-predef.h \
  /usr/include/pcl-1.8/pcl/visualization/pcl_visualizer.h \
  /usr/include/pcl-1.8/pcl/correspondence.h \
  /usr/include/boost/shared_ptr.hpp \

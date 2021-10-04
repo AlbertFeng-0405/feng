@@ -1,4 +1,4 @@
-# Install script for directory: /home/albert/learn_cpp/kmeans
+# Install script for directory: /home/albert/pointcloud_process/kmeans
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/albert/learn_cpp/kmeans/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/albert/pointcloud_process/kmeans/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/albert/learn_cpp/kmeans/kmeans.cpp" "CMakeFiles/kmeans.dir/kmeans.cpp.o" "gcc" "CMakeFiles/kmeans.dir/kmeans.cpp.o.d"
+  "/home/albert/pointcloud_process/kmeans/kmeans.cpp" "CMakeFiles/kmeans.dir/kmeans.cpp.o" "gcc" "CMakeFiles/kmeans.dir/kmeans.cpp.o.d"
   )
 
 # Targets to which this target links.

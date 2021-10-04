@@ -57,10 +57,10 @@ RM = /home/albert/.local/lib/python2.7/site-packages/cmake/data/bin/cmake -E rm 
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/albert/learn_cpp
+CMAKE_SOURCE_DIR = /home/albert/pointcloud_process
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/albert/learn_cpp/build
+CMAKE_BINARY_DIR = /home/albert/pointcloud_process/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -101,16 +101,6 @@ install/fast: preinstall/fast
 	/home/albert/.local/lib/python2.7/site-packages/cmake/data/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/bin/cmake-gui -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-.PHONY : edit_cache/fast
-
 # Special rule for the target list_install_components
 list_install_components:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
@@ -119,6 +109,16 @@ list_install_components:
 # Special rule for the target list_install_components
 list_install_components/fast: list_install_components
 .PHONY : list_install_components/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/home/albert/.local/lib/python2.7/site-packages/cmake/data/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+.PHONY : edit_cache/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -132,9 +132,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/learn_cpp/build/CMakeFiles /home/albert/learn_cpp/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/build/CMakeFiles /home/albert/pointcloud_process/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/learn_cpp/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -160,6 +160,19 @@ preinstall/fast:
 depend:
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+#=============================================================================
+# Target rules for targets named first
+
+# Build rule for target.
+first: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 first
+.PHONY : first
+
+# fast build rule for target.
+first/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/first.dir/build.make CMakeFiles/first.dir/build
+.PHONY : first/fast
 
 #=============================================================================
 # Target rules for targets named pc_cluster
@@ -199,6 +212,30 @@ show_cluster: cmake_check_build_system
 show_cluster/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/show_cluster.dir/build.make CMakeFiles/show_cluster.dir/build
 .PHONY : show_cluster/fast
+
+first.o: first.cpp.o
+.PHONY : first.o
+
+# target to build an object file
+first.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/first.dir/build.make CMakeFiles/first.dir/first.cpp.o
+.PHONY : first.cpp.o
+
+first.i: first.cpp.i
+.PHONY : first.i
+
+# target to preprocess a source file
+first.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/first.dir/build.make CMakeFiles/first.dir/first.cpp.i
+.PHONY : first.cpp.i
+
+first.s: first.cpp.s
+.PHONY : first.s
+
+# target to generate assembly for a file
+first.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/first.dir/build.make CMakeFiles/first.dir/first.cpp.s
+.PHONY : first.cpp.s
 
 pc_cluster.o: pc_cluster.cpp.o
 .PHONY : pc_cluster.o
@@ -284,9 +321,13 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... first"
 	@echo "... pc_cluster"
 	@echo "... pcl_test"
 	@echo "... show_cluster"
+	@echo "... first.o"
+	@echo "... first.i"
+	@echo "... first.s"
 	@echo "... pc_cluster.o"
 	@echo "... pc_cluster.i"
 	@echo "... pc_cluster.s"

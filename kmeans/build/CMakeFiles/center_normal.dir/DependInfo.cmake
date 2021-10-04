@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/albert/learn_cpp/kmeans/center_normal.cpp" "CMakeFiles/center_normal.dir/center_normal.cpp.o" "gcc" "CMakeFiles/center_normal.dir/center_normal.cpp.o.d"
+  "/home/albert/pointcloud_process/kmeans/center_normal.cpp" "CMakeFiles/center_normal.dir/center_normal.cpp.o" "gcc" "CMakeFiles/center_normal.dir/center_normal.cpp.o.d"
   )
 
 # Targets to which this target links.

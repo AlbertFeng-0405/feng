@@ -54,10 +54,10 @@ RM = /home/albert/.local/lib/python2.7/site-packages/cmake/data/bin/cmake -E rm 
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/albert/learn_cpp/kmeans
+CMAKE_SOURCE_DIR = /home/albert/pointcloud_process/kmeans
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/albert/learn_cpp/kmeans/build
+CMAKE_BINARY_DIR = /home/albert/pointcloud_process/kmeans/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -83,14 +83,14 @@ clean: CMakeFiles/center_normal.dir/clean
 CMakeFiles/kmeans.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kmeans.dir/build.make CMakeFiles/kmeans.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kmeans.dir/build.make CMakeFiles/kmeans.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/learn_cpp/kmeans/build/CMakeFiles --progress-num=3,4 "Built target kmeans"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/pointcloud_process/kmeans/build/CMakeFiles --progress-num=3,4 "Built target kmeans"
 .PHONY : CMakeFiles/kmeans.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/kmeans.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/learn_cpp/kmeans/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/kmeans.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/learn_cpp/kmeans/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 0
 .PHONY : CMakeFiles/kmeans.dir/rule
 
 # Convenience name for target.
@@ -109,14 +109,14 @@ CMakeFiles/kmeans.dir/clean:
 CMakeFiles/center_normal.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/center_normal.dir/build.make CMakeFiles/center_normal.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/center_normal.dir/build.make CMakeFiles/center_normal.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/learn_cpp/kmeans/build/CMakeFiles --progress-num=1,2 "Built target center_normal"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/pointcloud_process/kmeans/build/CMakeFiles --progress-num=1,2 "Built target center_normal"
 .PHONY : CMakeFiles/center_normal.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/center_normal.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/learn_cpp/kmeans/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/center_normal.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/learn_cpp/kmeans/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 0
 .PHONY : CMakeFiles/center_normal.dir/rule
 
 # Convenience name for target.

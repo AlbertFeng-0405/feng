@@ -1,6 +1,7 @@
 CMakeFiles/pc_cluster.dir/pc_cluster.cpp.o: \
- /home/albert/learn_cpp/pc_cluster.cpp /usr/include/stdc-predef.h \
- /usr/include/pcl-1.8/pcl/ModelCoefficients.h /usr/include/c++/8/string \
+ /home/albert/pointcloud_process/pc_cluster.cpp \
+ /usr/include/stdc-predef.h /usr/include/pcl-1.8/pcl/ModelCoefficients.h \
+ /usr/include/c++/8/string \
  /usr/include/x86_64-linux-gnu/c++/8/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/8/bits/os_defines.h \
  /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
