@@ -64,7 +64,7 @@ if __name__ == '__main__':
     pts, vns = find_face_pt(obj_file_path, norm_path)
     cluster_center = []
     cluster_ref_normal = []
-    with open('/home/albert/learn_cpp/kmeans/build/center.txt','r') as f:
+    with open('/home/albert/pointcloud_process/kmeans/build/center.txt','r') as f:
         for line in f.readlines():
             line = line.strip('\n') 
             line = line.split(' ')
@@ -77,19 +77,23 @@ if __name__ == '__main__':
             temp_dis[j] = np.linalg.norm(cluster_center[i]-pts[j])
             temp_list.append(np.linalg.norm(cluster_center[i]-pts[j]))
         temp_list.sort()
-        index = get_key(temp_dis,temp_list[0])[0]
-        flag=0
-        while (np.mean(vns[index]) == 0):
-            index = get_key(temp_dis,temp_list[flag+1])[0]
-            flag+1
-        cluster_ref_normal.append(vns[index])
+        flag=2
+        temp_norm = np.array([0.0,0.0,0.0])
+        for i in range(flag):
+            index = get_key(temp_dis,temp_list[i])[0]
+            temp_norm += vns[index]
+        # while (np.mean(vns[index]) == 0):
+        #     index = get_key(temp_dis,temp_list[flag+1])[0]
+        #     flag+1
+        temp_norm = temp_norm/3
+        cluster_ref_normal.append(temp_norm)
     
     print(cluster_ref_normal)
 
     for i in range(len(cluster_ref_normal)):
-        f = open('/home/albert/learn_cpp/kmeans/build/ref.txt','a',buffering = 200)
+        f = open('/home/albert/pointcloud_process/kmeans/build/ref.txt','a',buffering = 200)
         strs = cluster_ref_normal[i]
-        norm_vec = str(i+1)+' '+str(strs[0])+' '+str(strs[1])+' '+str(strs[2])
+        norm_vec = str(strs[0])+' '+str(strs[1])+' '+str(strs[2])
         f.write(norm_vec)
         f.write('\n')
         #f.close()
