@@ -101,13 +101,13 @@ int main( int argc, char** argv )
       normal.color.a = 1.0;
 
       geometry_msgs::Point s;
-      s.x = c_and_n[6*i];
-      s.y = c_and_n[6*i+1];
-      s.z = c_and_n[6*i+2];
+      s.x = 0.0;//c_and_n[6*i];
+      s.y = 0.0;//c_and_n[6*i+1];
+      s.z = 0.0;//c_and_n[6*i+2];
       geometry_msgs::Point e;
-      e.x = c_and_n[6*i]+c_and_n[6*i+3];
-      e.y = c_and_n[6*i+1]+c_and_n[6*i+4];
-      e.z = c_and_n[6*i+2]+c_and_n[6*i+5];
+      e.x = 0.0;//c_and_n[6*i]+c_and_n[6*i+3];
+      e.y = 10.0;//c_and_n[6*i+1]+c_and_n[6*i+4];
+      e.z = 0.0;//c_and_n[6*i+2]+c_and_n[6*i+5];
 
       normal.points.push_back(s);
       normal.points.push_back(e);
