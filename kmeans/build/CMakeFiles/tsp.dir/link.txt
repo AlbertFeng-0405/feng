@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/tsp.dir/prepare_tsp.cpp.o -o tsp 

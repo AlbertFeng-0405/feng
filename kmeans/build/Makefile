@@ -117,6 +117,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named tsp
+
+# Build rule for target.
+tsp: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tsp
+.PHONY : tsp
+
+# fast build rule for target.
+tsp/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tsp.dir/build.make CMakeFiles/tsp.dir/build
+.PHONY : tsp/fast
+
+#=============================================================================
 # Target rules for targets named kmeans
 
 # Build rule for target.
@@ -190,6 +203,30 @@ kmeans.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kmeans.dir/build.make CMakeFiles/kmeans.dir/kmeans.cpp.s
 .PHONY : kmeans.cpp.s
 
+prepare_tsp.o: prepare_tsp.cpp.o
+.PHONY : prepare_tsp.o
+
+# target to build an object file
+prepare_tsp.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tsp.dir/build.make CMakeFiles/tsp.dir/prepare_tsp.cpp.o
+.PHONY : prepare_tsp.cpp.o
+
+prepare_tsp.i: prepare_tsp.cpp.i
+.PHONY : prepare_tsp.i
+
+# target to preprocess a source file
+prepare_tsp.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tsp.dir/build.make CMakeFiles/tsp.dir/prepare_tsp.cpp.i
+.PHONY : prepare_tsp.cpp.i
+
+prepare_tsp.s: prepare_tsp.cpp.s
+.PHONY : prepare_tsp.s
+
+# target to generate assembly for a file
+prepare_tsp.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tsp.dir/build.make CMakeFiles/tsp.dir/prepare_tsp.cpp.s
+.PHONY : prepare_tsp.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -200,12 +237,16 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... center_normal"
 	@echo "... kmeans"
+	@echo "... tsp"
 	@echo "... center_normal.o"
 	@echo "... center_normal.i"
 	@echo "... center_normal.s"
 	@echo "... kmeans.o"
 	@echo "... kmeans.i"
 	@echo "... kmeans.s"
+	@echo "... prepare_tsp.o"
+	@echo "... prepare_tsp.i"
+	@echo "... prepare_tsp.s"
 .PHONY : help
 
 

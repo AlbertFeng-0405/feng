@@ -15,5 +15,6 @@ add_definitions(${EIGEN_DEFINITIONS})
 
 add_executable (kmeans kmeans.cpp)
 add_executable (center_normal center_normal.cpp)
+add_executable (tsp prepare_tsp.cpp)
 target_link_libraries (kmeans ${PCL_LIBRARIES})
 target_link_libraries (center_normal ${PCL_LIBRARIES})

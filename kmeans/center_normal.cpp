@@ -22,7 +22,12 @@
 #include <cmath>
 #include <cstdlib>
 
-bool judge_in_out(Eigen::Vector3d v_1, Eigen::Vector3d v_2, Eigen::Vector3d v_ref){
+bool judge_in_out(Eigen::Vector3d v_1, Eigen::Vector3d v_2, Eigen::Vector3d v_ref, std::vector<double> center_pt){
+    Eigen::Vector3d c_cluster(center_pt[0], center_pt[1], center_pt[2]);
+    Eigen::Vector3d dis_1 = c_cluster + 4*v_1;
+    Eigen::Vector3d dis_2 = c_cluster + 4*v_2;
+    //dis_1.norm() vs. dis_2.norm()
+
     double inner_1 = v_1.dot(v_ref) /(v_1.norm()*v_ref.norm());
     double angleNew_1 = acos(inner_1) * 180 / M_PI;
     //std::cout << "angle_1:" << angleNew_1 << std::endl;
@@ -99,7 +104,10 @@ int main(int argc,char **argv){
 	ref_path = "/home/albert/pointcloud_process/kmeans/build/ref.txt";
     getpts(ref_path, ref_vec);
 
-    for(int i=1; i<=50; i++){
+    int cluster = 50;
+    float threshold_rate = 0.85;
+
+    for(int i=1; i<=cluster; i++){
     std::vector<double> center;
     Eigen::Vector3d refv(ref_vec[3*(i-1)], ref_vec[3*(i-1)+1], ref_vec[3*(i-1)+2]);
 
@@ -160,7 +168,7 @@ int main(int argc,char **argv){
     Eigen::Vector3d waiting_2 = v.cross(z_direction);
 
     bool flag;
-    flag = judge_in_out(waiting_1, waiting_2, refv);
+    flag = judge_in_out(waiting_1, waiting_2, refv, center);
     Eigen::Vector3d face_normal;
     if (flag){
         face_normal = waiting_1;
@@ -170,6 +178,38 @@ int main(int argc,char **argv){
     }// decide the normal of this cluster
 
     std::cout << "normal:" << face_normal << std::endl;
+
+    float config_y = center[1];
+    float config_x, config_z, config_yaw, including_rate;
+    config_x, config_z, config_yaw = sampling_config(face_normal, center, i);
+    Eigen::Vector3f config(config_x, config_y, config_z);
+    int inners = 0;
+    for(int i=0;i<cloud->points.size();i++){
+        Eigen::Vector3f pc_point(cloud->points[i].z, cloud->points[i].y, cloud->points[i].z);
+        if (judge_in_frustum(pc_point, config, config_yaw)){
+            inners += 1;
+        }
+    }
+    including_rate = (float)inners/pt_num;
+
+
+    int epoch = 1;
+    while (including_rate > threshold_rate){
+        config_x, config_z, config_yaw = sampling_config(face_normal, center, i+epoch*cluster);
+        config(0) = config_x;
+        config(2) = config_z;
+        inner = 0;
+        for(int i=0;i<cloud->points.size();i++){
+        Eigen::Vector3f pc_point(cloud->points[i].z, cloud->points[i].y, cloud->points[i].z);
+        if (judge_in_frustum(pc_point, config, config_yaw)){
+            inners += 1;
+        }
+    }
+    including_rate = (float)inners/pt_num;
+    }
+
+    std::cout << "configration:" << config << std::endl;
+    std::cout << "yaw_angle:" << config_yaw << std::endl;
 
     //std::cout<< "Principlal direction:" << v << std::endl;
 
