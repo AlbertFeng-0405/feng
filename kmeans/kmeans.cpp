@@ -1,5 +1,6 @@
 #include "head.h"
 #include <ctime>
+#include <iostream>
 //#include <pcl/common/common_headers.h>  //包含角度计算
 
 const float DIST_NEAR_ZERO = 0.001;  //控制中心点移动的阀值

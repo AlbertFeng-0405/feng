@@ -21,25 +21,30 @@
 #include <string>
 #include <cmath>
 #include <cstdlib>
+#include <ctime>
 
 bool judge_in_out(Eigen::Vector3d v_1, Eigen::Vector3d v_2, Eigen::Vector3d v_ref, std::vector<double> center_pt){
+    Eigen::Vector3d remote(0.0, -500.0, 0.0);// 500 important
+    Eigen::Vector3d up(0.0, 1.0, 0.0);
     Eigen::Vector3d c_cluster(center_pt[0], center_pt[1], center_pt[2]);
-    Eigen::Vector3d dis_1 = c_cluster + 4*v_1;
-    Eigen::Vector3d dis_2 = c_cluster + 4*v_2;
+    Eigen::Vector3d dis_1 = c_cluster + 50*v_1;
+    Eigen::Vector3d dis_2 = c_cluster + 50*v_2;// 50 important disturbance
+    Eigen::Vector3d w_1 = dis_1-remote;
+    Eigen::Vector3d w_2 = dis_2-remote;
     //dis_1.norm() vs. dis_2.norm()
 
-    double inner_1 = v_1.dot(v_ref) /(v_1.norm()*v_ref.norm());
+    double inner_1 = w_1.dot(up) /(w_1.norm()*up.norm());
     double angleNew_1 = acos(inner_1) * 180 / M_PI;
     //std::cout << "angle_1:" << angleNew_1 << std::endl;
 
-    double inner_2 = v_2.dot(v_ref) /(v_2.norm()*v_ref.norm());
+    double inner_2 = w_2.dot(up) /(w_2.norm()*up.norm());
     double angleNew_2 = acos(inner_2) * 180 / M_PI;
     //std::cout << "angle_2:" << angleNew_2 << std::endl;
 
-    if (angleNew_1<=angleNew_2){
+    if (angleNew_1 > angleNew_2){//angleNew_1<=angleNew_2 | (dis_1-remote).norm()>(dis_2-remote).norm()
         return true;
     }
-    if (angleNew_1>angleNew_2){
+    if (angleNew_1 <= angleNew_2){//angleNew_1>angleNew_2 | (dis_2-remote).norm()>(dis_1-remote).norm()
         return false;
     }
 }
@@ -61,43 +66,54 @@ void getpts(std::string path, std::vector<double>& lines){
 	infile_feat.close();
 }
 
-float sampling_config(Eigen::Vector3d normal, std::vector<double> center_position, int seed){
+void sampling_config(Eigen::Vector3d normal, std::vector<double>& center_position, int seed, float& s_x, float& s_z, float& yaw_x, float& yaw_z){
     Eigen::Vector2f direction(normal(0),normal(2));
-    Eigen::Vector2f sample_vec;
+    float norm_length, norm_angle, direc_angle, s_l, s_r;
+    float frustum_range = 7.0, min_range = 2.0;
+    float frustum_angle = M_PI/6;
+
+    direc_angle = atan(normal(2)/normal(0));
+    s_l = direc_angle - frustum_angle;
+    s_r = direc_angle + frustum_angle;
     
-    float s_x, s_z, yaw; //because up axis is y_axis
-    srand(seed); 
-    s_x = (float)50*rand()/float(RAND_MAX)-25;//sample range 50 x 50 m^2
-    s_z = (float)50*rand()/float(RAND_MAX)-25;
-    yaw = (rand() / float(RAND_MAX))*2*M_PI;
+    srand (static_cast <unsigned> (seed));
+    norm_length = min_range + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(frustum_range-min_range)));
+    srand (static_cast <unsigned> (4*seed));
+    norm_angle =  s_l + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(s_r-s_l)));
 
-    sample_vec(0) = s_x-direction(0);
-    sample_vec(1) = s_z-direction(1);
-    while (sample_vec.norm()>4.5 || (acos(direction.dot(sample_vec) /(direction.norm()*sample_vec.norm())) * 180 / M_PI)>30.0){
-      seed += 1;
-      srand(seed); 
-      s_x = (float)50*rand()/float(RAND_MAX)-25;//sample range 50 x 50 m^2
-      s_z = (float)50*rand()/float(RAND_MAX)-25;
-      yaw = (rand() / float(RAND_MAX))*2*M_PI;
-    }
-
-    return s_x, s_z, yaw;
+    Eigen::Vector2f sample_vec(norm_length*cos(norm_angle), norm_length*sin(norm_angle));
+    
+    s_x = center_position[0] + sample_vec(0);
+    s_z = center_position[2] + sample_vec(1);
+    yaw_x = -sample_vec(0);
+    yaw_z = -sample_vec(1);
 }
 
-bool judge_in_frustum(Eigen::Vector3f pc_pt, Eigen::Vector3f config, float yaw_angle){// judege if point from this cluster can be seen by UAV
-    Eigen::Vector3f fov_normal(cos(yaw_angle), 0.0, sin(yaw_angle));
+bool judge_in_frustum(Eigen::Vector3f pc_pt, Eigen::Vector3f config, float yaw_x, float yaw_z){// judege if point from this cluster can be seen by UAV
+    Eigen::Vector3f fov_normal(yaw_x, 0.0, yaw_z);
     Eigen::Vector3f check_vec = pc_pt - config;
+    Eigen::Vector2f check_dis(check_vec(0), check_vec(2));
+    float camera_range = 50.0;
+    float fov_range = 30.0;
 
     float included_angle = acos(check_vec.dot(fov_normal) /(check_vec.norm()*fov_normal.norm())) * 180 / M_PI;
+    // std::cout<< "dis: " << check_dis.norm();
+    // std::cout<< "ang: " << included_angle;
     
-    if (check_vec.norm()<6.0 && included_angle<30.0){
+    if (included_angle<fov_range){//&& check_dis.norm()<camera_range
         return true;
     }
-    return false;
+    else{
+        return false;
+    }
 }
 
+
 int main(int argc,char **argv){
-    //ofstream OutFile("/home/albert/learn_cpp/kmeans/build/center.txt");
+    ofstream OutFile("/home/albert/pointcloud_process/kmeans/build/normal.txt");
+    std::string cfg_path = "/home/albert/pointcloud_process/kmeans/build/cfg.txt";
+    std::ofstream file(cfg_path);
+
     Eigen::Vector3d z_direction(0.0,1.0,0.0); // for this house.obj, phisical z_axis is y_axis in model. Temp pending for demo test.
     std::vector<double> ref_vec;
     std::string ref_path;
@@ -163,64 +179,94 @@ int main(int argc,char **argv){
 
     Eigen::Vector3d v(vec(0, ii), vec(1, ii), vec(2, ii));
     v /= v.norm();
+    Eigen::Vector3d v_ = -v;
 
-    Eigen::Vector3d waiting_1 = z_direction.cross(v);
-    Eigen::Vector3d waiting_2 = v.cross(z_direction);
+    // Eigen::Vector3d waiting_1 = z_direction.cross(v);
+    // Eigen::Vector3d waiting_2 = v.cross(z_direction);
 
     bool flag;
-    flag = judge_in_out(waiting_1, waiting_2, refv, center);
+    flag = judge_in_out(v, v_, refv, center);
     Eigen::Vector3d face_normal;
     if (flag){
-        face_normal = waiting_1;
+        face_normal = v;
     }
     if (!flag){
-        face_normal = waiting_2;
+        face_normal = v_;
     }// decide the normal of this cluster
 
-    std::cout << "normal:" << face_normal << std::endl;
+    face_normal(1) = 0.0;// because y_axis is vertical to ground
+    face_normal /= face_normal.norm();
+
+    //std::cout << "normal:" << face_normal << std::endl;
+    std::vector<float> normal_vector;
+    normal_vector.push_back(face_normal(0));
+    normal_vector.push_back(face_normal(1));
+    normal_vector.push_back(face_normal(2));
 
     float config_y = center[1];
-    float config_x, config_z, config_yaw, including_rate;
-    config_x, config_z, config_yaw = sampling_config(face_normal, center, i);
-    Eigen::Vector3f config(config_x, config_y, config_z);
+    float config_x, config_z, config_yaw_x, config_yaw_z, including_rate;
+
+    sampling_config(face_normal, center, i, config_x, config_z, config_yaw_x, config_yaw_z);
+
+    Eigen::Vector3f con(config_x, config_y, config_z);
+    Eigen::Vector3f con_view(config_yaw_x, 0.0, config_yaw_z);
+    con_view /= con_view.norm();
+
+    std::cout << "configration:" << con << std::endl;
     int inners = 0;
     for(int i=0;i<cloud->points.size();i++){
         Eigen::Vector3f pc_point(cloud->points[i].z, cloud->points[i].y, cloud->points[i].z);
-        if (judge_in_frustum(pc_point, config, config_yaw)){
+        if (judge_in_frustum(pc_point, con, config_yaw_x, config_yaw_z)){
             inners += 1;
         }
     }
     including_rate = (float)inners/pt_num;
+    std::cout << "rate:" << including_rate << std::endl;
 
 
-    int epoch = 1;
-    while (including_rate > threshold_rate){
-        config_x, config_z, config_yaw = sampling_config(face_normal, center, i+epoch*cluster);
-        config(0) = config_x;
-        config(2) = config_z;
-        inner = 0;
-        for(int i=0;i<cloud->points.size();i++){
-        Eigen::Vector3f pc_point(cloud->points[i].z, cloud->points[i].y, cloud->points[i].z);
-        if (judge_in_frustum(pc_point, config, config_yaw)){
-            inners += 1;
-        }
-    }
-    including_rate = (float)inners/pt_num;
-    }
+    // int epoch = 1;
+    // while (including_rate < threshold_rate){
+    //     sampling_config(face_normal, center, i+epoch*2, config_x, config_z, config_yaw_x, config_yaw_z);
+    //     con(0) = config_x;
+    //     con(2) = config_z;
+    //     inners = 0;
+    //     for(int i=0;i<cloud->points.size();i++){
+    //     Eigen::Vector3f pc_point(cloud->points[i].z, cloud->points[i].y, cloud->points[i].z);
+    //     if (judge_in_frustum(pc_point, con, config_yaw_x, config_yaw_z)){
+    //         inners += 1;
+    //     }
+    // }
+    // including_rate = (float)inners/pt_num;
+    // epoch +=1;
+    // // std::cout << "update_rate: " << including_rate << std::endl;
+    // }
 
-    std::cout << "configration:" << config << std::endl;
-    std::cout << "yaw_angle:" << config_yaw << std::endl;
-
-    //std::cout<< "Principlal direction:" << v << std::endl;
-
-    std::stringstream result;
-    std::copy(center.begin(), center.end(), std::ostream_iterator<float>(result, " "));
-    // OutFile << std::to_string(i)+" ";
-    // OutFile << result.str().c_str();
-    // OutFile << std::endl;
+    // std::cout << "configration:" << con << std::endl;
     
+    std::stringstream ce;
+    std::copy(center.begin(), center.end(), std::ostream_iterator<float>(ce, " "));
+    std::stringstream result;
+    std::copy(normal_vector.begin(), normal_vector.end(), std::ostream_iterator<float>(result, " "));
+    //OutFile << std::to_string(i)+" ";
+    OutFile << ce.str().c_str();
+    OutFile << result.str().c_str();
+    OutFile << std::endl;
+    
+    std::stringstream cfg;
+    std::vector<float> cfg_space;
+    cfg_space.push_back(con(0));
+    cfg_space.push_back(con(1));
+    cfg_space.push_back(con(2));
+    cfg_space.push_back(con_view(0));
+    cfg_space.push_back(con_view(1));
+    cfg_space.push_back(con_view(2));
+    std::copy(cfg_space.begin(), cfg_space.end(), std::ostream_iterator<float>(cfg, " "));
+
+    file << cfg.str().c_str();
+    file << std::endl;
     }
-    //OutFile.close();
+    OutFile.close();
+    file.close();
 
     return 0;
 }
