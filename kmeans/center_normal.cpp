@@ -23,6 +23,8 @@
 #include <cstdlib>
 #include <ctime>
 
+// this house unit is dm not m.
+
 bool judge_in_out(Eigen::Vector3d v_1, Eigen::Vector3d v_2, Eigen::Vector3d v_ref, std::vector<double> center_pt){
     Eigen::Vector3d remote(0.0, -500.0, 0.0);// 500 important
     Eigen::Vector3d up(0.0, 1.0, 0.0);
@@ -69,8 +71,9 @@ void getpts(std::string path, std::vector<double>& lines){
 void sampling_config(Eigen::Vector3d normal, std::vector<double>& center_position, int seed, float& s_x, float& s_z, float& yaw_x, float& yaw_z){
     Eigen::Vector2f direction(normal(0),normal(2));
     float norm_length, norm_angle, direc_angle, s_l, s_r;
-    float frustum_range = 7.0, min_range = 2.0;
-    float frustum_angle = M_PI/6;
+    float frustum_range = 60.0, min_range = 40.0;
+    float frustum_angle = 2*M_PI + M_PI/6;// problem !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    float th_angle = 30.0;
 
     direc_angle = atan(normal(2)/normal(0));
     s_l = direc_angle - frustum_angle;
@@ -82,6 +85,22 @@ void sampling_config(Eigen::Vector3d normal, std::vector<double>& center_positio
     norm_angle =  s_l + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(s_r-s_l)));
 
     Eigen::Vector2f sample_vec(norm_length*cos(norm_angle), norm_length*sin(norm_angle));
+
+    float test_angle = acos(direction.dot(sample_vec) /(direction.norm()*sample_vec.norm())) * 180 / M_PI;
+    int ee = 1;
+    while(test_angle > th_angle || norm_length > frustum_range || norm_length < min_range)
+    {
+        srand (static_cast <unsigned> (seed + ee));
+        norm_length = min_range + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(frustum_range-min_range)));
+        srand (static_cast <unsigned> (4*seed + ee));
+        norm_angle =  s_l + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(s_r-s_l)));
+        ee += 1;
+        sample_vec(0) = norm_length*cos(norm_angle);
+        sample_vec(1) = norm_length*sin(norm_angle);
+        test_angle = acos(direction.dot(sample_vec) /(direction.norm()*sample_vec.norm())) * 180 / M_PI;
+    }
+    // std::cout << "test_length: " << norm_length << std::endl;
+    // std::cout << "test_angle: " << test_angle << std::endl;
     
     s_x = center_position[0] + sample_vec(0);
     s_z = center_position[2] + sample_vec(1);
@@ -93,14 +112,14 @@ bool judge_in_frustum(Eigen::Vector3f pc_pt, Eigen::Vector3f config, float yaw_x
     Eigen::Vector3f fov_normal(yaw_x, 0.0, yaw_z);
     Eigen::Vector3f check_vec = pc_pt - config;
     Eigen::Vector2f check_dis(check_vec(0), check_vec(2));
-    float camera_range = 50.0;
+    float camera_range = 60.0;
     float fov_range = 30.0;
 
     float included_angle = acos(check_vec.dot(fov_normal) /(check_vec.norm()*fov_normal.norm())) * 180 / M_PI;
     // std::cout<< "dis: " << check_dis.norm();
-    // std::cout<< "ang: " << included_angle;
+    //std::cout<< "ang: " << included_angle;
     
-    if (included_angle<fov_range){//&& check_dis.norm()<camera_range
+    if (included_angle<fov_range && check_dis.norm()<camera_range){//&& check_dis.norm()<camera_range
         return true;
     }
     else{
@@ -121,7 +140,8 @@ int main(int argc,char **argv){
     getpts(ref_path, ref_vec);
 
     int cluster = 50;
-    float threshold_rate = 0.85;
+    float threshold_rate = 0.8;
+    int non_visible = 0;
 
     for(int i=1; i<=cluster; i++){
     std::vector<double> center;
@@ -212,36 +232,43 @@ int main(int argc,char **argv){
     Eigen::Vector3f con_view(config_yaw_x, 0.0, config_yaw_z);
     con_view /= con_view.norm();
 
-    std::cout << "configration:" << con << std::endl;
     int inners = 0;
     for(int i=0;i<cloud->points.size();i++){
-        Eigen::Vector3f pc_point(cloud->points[i].z, cloud->points[i].y, cloud->points[i].z);
+        Eigen::Vector3f pc_point(cloud->points[i].x, cloud->points[i].y, cloud->points[i].z);
         if (judge_in_frustum(pc_point, con, config_yaw_x, config_yaw_z)){
             inners += 1;
         }
     }
     including_rate = (float)inners/pt_num;
-    std::cout << "rate:" << including_rate << std::endl;
 
-
-    // int epoch = 1;
-    // while (including_rate < threshold_rate){
-    //     sampling_config(face_normal, center, i+epoch*2, config_x, config_z, config_yaw_x, config_yaw_z);
-    //     con(0) = config_x;
-    //     con(2) = config_z;
-    //     inners = 0;
-    //     for(int i=0;i<cloud->points.size();i++){
-    //     Eigen::Vector3f pc_point(cloud->points[i].z, cloud->points[i].y, cloud->points[i].z);
-    //     if (judge_in_frustum(pc_point, con, config_yaw_x, config_yaw_z)){
-    //         inners += 1;
-    //     }
-    // }
-    // including_rate = (float)inners/pt_num;
-    // epoch +=1;
-    // // std::cout << "update_rate: " << including_rate << std::endl;
-    // }
-
+    if (including_rate != 0.0){
+    int epoch = 1;
+    while (including_rate < threshold_rate){
+        sampling_config(face_normal, center, i+epoch*2, config_x, config_z, config_yaw_x, config_yaw_z);
+        con(0) = config_x;
+        con(2) = config_z;
+        con_view(0) = config_yaw_x;
+        con_view(2) = config_yaw_z;
+        con_view /= con_view.norm();
+        inners = 0;
+        for(int i=0;i<cloud->points.size();i++){
+        Eigen::Vector3f pc_point(cloud->points[i].x, cloud->points[i].y, cloud->points[i].z);
+        if (judge_in_frustum(pc_point, con, config_yaw_x, config_yaw_z)){
+            inners += 1;
+        }
+    }
+    including_rate = (float)inners/pt_num;
+    epoch +=1;
+    //std::cout << "update_rate: " << including_rate << std::endl;
+    }
+    }
+    else{
+        std::cout<< "non_vis_id" << i << std::endl;
+        non_visible += 1;
+    }
     // std::cout << "configration:" << con << std::endl;
+    std::cout << "rate:" << including_rate << std::endl;
+    
     
     std::stringstream ce;
     std::copy(center.begin(), center.end(), std::ostream_iterator<float>(ce, " "));
@@ -265,6 +292,9 @@ int main(int argc,char **argv){
     file << cfg.str().c_str();
     file << std::endl;
     }
+    
+    std::cout << "non_visible: " << non_visible << std::endl;
+
     OutFile.close();
     file.close();
 
