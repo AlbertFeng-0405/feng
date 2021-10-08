@@ -255,6 +255,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
+  "CMakeFiles/knn.dir/DependInfo.cmake"
   "CMakeFiles/tsp.dir/DependInfo.cmake"
   "CMakeFiles/kmeans.dir/DependInfo.cmake"
   "CMakeFiles/center_normal.dir/DependInfo.cmake"

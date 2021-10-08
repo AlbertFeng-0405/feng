@@ -117,6 +117,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named knn
+
+# Build rule for target.
+knn: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 knn
+.PHONY : knn
+
+# fast build rule for target.
+knn/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/build
+.PHONY : knn/fast
+
+#=============================================================================
 # Target rules for targets named tsp
 
 # Build rule for target.
@@ -203,6 +216,30 @@ kmeans.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kmeans.dir/build.make CMakeFiles/kmeans.dir/kmeans.cpp.s
 .PHONY : kmeans.cpp.s
 
+knn_4_normal.o: knn_4_normal.cpp.o
+.PHONY : knn_4_normal.o
+
+# target to build an object file
+knn_4_normal.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/knn_4_normal.cpp.o
+.PHONY : knn_4_normal.cpp.o
+
+knn_4_normal.i: knn_4_normal.cpp.i
+.PHONY : knn_4_normal.i
+
+# target to preprocess a source file
+knn_4_normal.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/knn_4_normal.cpp.i
+.PHONY : knn_4_normal.cpp.i
+
+knn_4_normal.s: knn_4_normal.cpp.s
+.PHONY : knn_4_normal.s
+
+# target to generate assembly for a file
+knn_4_normal.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/knn_4_normal.cpp.s
+.PHONY : knn_4_normal.cpp.s
+
 prepare_tsp.o: prepare_tsp.cpp.o
 .PHONY : prepare_tsp.o
 
@@ -237,6 +274,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... center_normal"
 	@echo "... kmeans"
+	@echo "... knn"
 	@echo "... tsp"
 	@echo "... center_normal.o"
 	@echo "... center_normal.i"
@@ -244,6 +282,9 @@ help:
 	@echo "... kmeans.o"
 	@echo "... kmeans.i"
 	@echo "... kmeans.s"
+	@echo "... knn_4_normal.o"
+	@echo "... knn_4_normal.i"
+	@echo "... knn_4_normal.s"
 	@echo "... prepare_tsp.o"
 	@echo "... prepare_tsp.i"
 	@echo "... prepare_tsp.s"

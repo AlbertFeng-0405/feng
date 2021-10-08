@@ -1,5 +1,6 @@
 /home/albert/pointcloud_process/kmeans/build/CMakeFiles/rebuild_cache.dir
 /home/albert/pointcloud_process/kmeans/build/CMakeFiles/edit_cache.dir
+/home/albert/pointcloud_process/kmeans/build/CMakeFiles/knn.dir
 /home/albert/pointcloud_process/kmeans/build/CMakeFiles/tsp.dir
 /home/albert/pointcloud_process/kmeans/build/CMakeFiles/kmeans.dir
 /home/albert/pointcloud_process/kmeans/build/CMakeFiles/center_normal.dir
