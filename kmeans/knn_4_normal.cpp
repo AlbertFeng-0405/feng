@@ -15,6 +15,7 @@
 #include <sstream>
 #include <pcl/features/normal_3d.h> 
 #include <ctime>
+#include <time.h>
 
 void knn(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int index, std::vector<int>& pointIdxNKNSearch){
     pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
@@ -40,7 +41,7 @@ void cal_2_norm(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, std::vector<int> cal_
     vec_2 /= vec_2.norm();
 }
 
-void cal_nearest_pt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, Eigen::Vector3f normal, Eigen::Vector3f pt, std::vector<float>& distance_down, std::vector<float>& vertical_down){
+void cal_nearest_pt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, Eigen::Vector3f normal, Eigen::Vector3f pt, std::vector<float>& distance_down){
     
     pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
     kdtree.setInputCloud (cloud);
@@ -60,34 +61,64 @@ void cal_nearest_pt(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, Eigen::Vector3f n
         point.z = disturb_pt(2)+interval*i*normal(2);
         kdtree.nearestKSearch (point, K, pointIdxNKNSearch, pointNKNSquaredDistance);
         distance_down.push_back(pointNKNSquaredDistance[0]);
-        vertical_down.push_back(point.y);
     }
 
 }
 
-void judge_i_o(std::vector<float> distance_list_down, std::vector<float> v_list_down, int& polar){
+void cal_nearest_pt_random(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, Eigen::Vector3f normal, Eigen::Vector3f pt, float offset, std::vector<float>& distance_down){
+    
+    pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
+    kdtree.setInputCloud (cloud);
+    int step = 100;
+    float move = 5.0;
+    move = move+offset;
+    float interval = 2.0; //direction : 0,1,0 baecause in this house, vertical axis is y-axis.
+
+    int K = 1;
+    std::vector<int> pointIdxNKNSearch;
+    std::vector<float> pointNKNSquaredDistance;
+    Eigen::Vector3f disturb_pt = pt + move*normal;
+
+    srand((unsigned)time(NULL));
+    float result_0 = rand() / float(RAND_MAX);
+    srand((unsigned)4*time(NULL));
+    float result_1 = rand() / float(RAND_MAX);
+    srand((unsigned)8*time(NULL));
+    float result_2 = rand() / float(RAND_MAX);
+
+    Eigen::Vector3f random_d(result_0, result_1, result_2);
+    random_d /= random_d.norm();
+
+    for(int i=0;i<step;i++){
+        pcl::PointXYZ point;
+        point.x = disturb_pt(0)+interval*i*random_d(0);
+        point.y = disturb_pt(1)+interval*i*random_d(1);//vertical down
+        point.z = disturb_pt(2)+interval*i*random_d(2);
+        kdtree.nearestKSearch (point, K, pointIdxNKNSearch, pointNKNSquaredDistance);
+        distance_down.push_back(pointNKNSquaredDistance[0]);
+    }
+
+}
+
+void judge_i_o(std::vector<float> distance_list_down, int& polar){
     float dis_th = 1.5;
     float gap_th = 5.0;
     float ground = -53.0;
-    int gap = 5;
+    int gap = 4;
+    int gap_id = 5;
     int polar_index = 0;
     for (int i=gap; i<distance_list_down.size()-gap; i++){
-        if ((distance_list_down[i-gap] > distance_list_down[i]) && (distance_list_down[i+gap] > distance_list_down[i]) && (distance_list_down[i] < dis_th) && (distance_list_down[i-gap]-distance_list_down[i] > gap_th) && (distance_list_down[i+gap]-distance_list_down[i] > gap_th) && ((i-polar_index) >= gap)){
+        if ((distance_list_down[i-gap] > distance_list_down[i]) && (distance_list_down[i+gap] > distance_list_down[i]) && (distance_list_down[i] < dis_th) && (distance_list_down[i-gap]-distance_list_down[i] > gap_th) && (distance_list_down[i+gap]-distance_list_down[i] > gap_th) && ((i-polar_index) >= gap_id)){
             polar += 1;
             polar_index = i;
         }
     }
     float minValue = *min_element(distance_list_down.begin(),distance_list_down.end());
+    int minPosition = min_element(distance_list_down.begin(),distance_list_down.end()) - distance_list_down.begin();
 
-    if ((polar == 0) && minValue < 1.0){
+    if ((polar == 0) && minValue < 1.0 && minPosition != 0){
         polar += 1;
     }
-    // for (int j=0;j<v_list_down.size();j++){
-    //     if (v_list_down[j]<ground){
-    //         polar += 1;
-    //         break;
-    //     }
-    // }
 }
 
 // void neighbor_judge(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
@@ -115,9 +146,9 @@ int main()
     int undiscri = 0;
     int end = process_cloud->points.size();
     srand((unsigned)time(NULL));
-    int test = (rand() % (end+1));
+    int test = 250;//(rand() % (end+1));
 
-    for (int i=test;i<test+1;i = i+50)
+    for (int i=0;i<end;i = i+50)
     {
     int process_id = i;
     if(process_cloud->points[process_id].y > -40.0){
@@ -135,31 +166,64 @@ int main()
     // std::cout << "vec_2: " << waiting_2 << std::endl;
 
     std::vector<float> surf_distance_1;
-    std::vector<float> vertical_list_1;
     int polar_1 = 0;
     std::vector<float> surf_distance_2;
-    std::vector<float> vertical_list_2;
     int polar_2 = 0;
 
-    cal_nearest_pt(process_cloud, waiting_1, focus_pt, surf_distance_1, vertical_list_1);
+    cal_nearest_pt(process_cloud, waiting_1, focus_pt, surf_distance_1);
+    judge_i_o(surf_distance_1, polar_1);
+
+    cal_nearest_pt(process_cloud, waiting_2, focus_pt, surf_distance_2);
+    judge_i_o(surf_distance_2, polar_2);
+
+    std::vector<float> v_1;
+    int cal = 0;
+    float mp = 0.0;
+
+    while ((polar_1%2 == polar_2%2)){
+        if (cal <= 500){
+        polar_1 = 0;
+        polar_2 = 0;
+        surf_distance_1.clear();
+        surf_distance_2.clear();
+
+        cal_nearest_pt_random(process_cloud, waiting_1, focus_pt, mp, surf_distance_1);
+        judge_i_o(surf_distance_1, polar_1);
+        cal_nearest_pt_random(process_cloud, waiting_2, focus_pt, mp, surf_distance_2);
+        judge_i_o(surf_distance_2, polar_2);
+        }
+        else if (cal>=500 && cal<1000){
+            mp = 45.0;
+            polar_1 = 0;
+            polar_2 = 0;
+            surf_distance_1.clear();
+            surf_distance_2.clear();
+
+            cal_nearest_pt_random(process_cloud, waiting_1, focus_pt, mp, surf_distance_1);
+            judge_i_o(surf_distance_1, polar_1);
+            cal_nearest_pt_random(process_cloud, waiting_2, focus_pt, mp, surf_distance_2);
+            judge_i_o(surf_distance_2, polar_2);
+        }
+        else if(cal>=1000){
+            undiscri += 1;
+            std::cout << "id: " << i << std::endl;
+            break;
+        }
+        cal += 1;
+    }
 
     for(int i=0; i<surf_distance_1.size();i++){
       std::cout << "dis: "<<surf_distance_1[i] << std::endl;
     }
+    std::cout<<"--------------------------------------------------- "<<std::endl;
 
-    judge_i_o(surf_distance_1, vertical_list_1, polar_1);
-    std::cout<<"polar_1: "<<polar_1<<std::endl;
-
-    cal_nearest_pt(process_cloud, waiting_2, focus_pt, surf_distance_2, vertical_list_2);
-    
     for(int i=0; i<surf_distance_2.size();i++){
       std::cout << "dis: "<<surf_distance_2[i] << std::endl;
     }
-
-    judge_i_o(surf_distance_2, vertical_list_2, polar_2);
+    std::cout<<"polar_1: "<<polar_1<<std::endl;
     std::cout<<"polar_2: "<<polar_2<<std::endl;
-
-    std::vector<float> v_1;
+    std::cout << "cal: " << cal << std::endl;
+    // std::cout << "id: " << i << std::endl;
 
     v_1.push_back(focus_pt(0));
     v_1.push_back(focus_pt(1));
