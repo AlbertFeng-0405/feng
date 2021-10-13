@@ -63,10 +63,11 @@ CMAKE_BINARY_DIR = /home/albert/pointcloud_process/kmeans/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/knn.dir/all
-all: CMakeFiles/tsp.dir/all
-all: CMakeFiles/kmeans.dir/all
 all: CMakeFiles/center_normal.dir/all
+all: CMakeFiles/kmeans.dir/all
+all: CMakeFiles/tsp.dir/all
+all: CMakeFiles/knn.dir/all
+all: CMakeFiles/cec.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -74,63 +75,38 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/knn.dir/clean
-clean: CMakeFiles/tsp.dir/clean
-clean: CMakeFiles/kmeans.dir/clean
 clean: CMakeFiles/center_normal.dir/clean
+clean: CMakeFiles/kmeans.dir/clean
+clean: CMakeFiles/tsp.dir/clean
+clean: CMakeFiles/knn.dir/clean
+clean: CMakeFiles/cec.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/knn.dir
+# Target rules for target CMakeFiles/center_normal.dir
 
 # All Build rule for target.
-CMakeFiles/knn.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/pointcloud_process/kmeans/build/CMakeFiles --progress-num=5,6 "Built target knn"
-.PHONY : CMakeFiles/knn.dir/all
+CMakeFiles/center_normal.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/center_normal.dir/build.make CMakeFiles/center_normal.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/center_normal.dir/build.make CMakeFiles/center_normal.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/pointcloud_process/kmeans/build/CMakeFiles --progress-num=3,4 "Built target center_normal"
+.PHONY : CMakeFiles/center_normal.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/knn.dir/rule: cmake_check_build_system
+CMakeFiles/center_normal.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/knn.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/center_normal.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 0
-.PHONY : CMakeFiles/knn.dir/rule
+.PHONY : CMakeFiles/center_normal.dir/rule
 
 # Convenience name for target.
-knn: CMakeFiles/knn.dir/rule
-.PHONY : knn
+center_normal: CMakeFiles/center_normal.dir/rule
+.PHONY : center_normal
 
 # clean rule for target.
-CMakeFiles/knn.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/clean
-.PHONY : CMakeFiles/knn.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/tsp.dir
-
-# All Build rule for target.
-CMakeFiles/tsp.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tsp.dir/build.make CMakeFiles/tsp.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tsp.dir/build.make CMakeFiles/tsp.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/pointcloud_process/kmeans/build/CMakeFiles --progress-num=7,8 "Built target tsp"
-.PHONY : CMakeFiles/tsp.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/tsp.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/tsp.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 0
-.PHONY : CMakeFiles/tsp.dir/rule
-
-# Convenience name for target.
-tsp: CMakeFiles/tsp.dir/rule
-.PHONY : tsp
-
-# clean rule for target.
-CMakeFiles/tsp.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tsp.dir/build.make CMakeFiles/tsp.dir/clean
-.PHONY : CMakeFiles/tsp.dir/clean
+CMakeFiles/center_normal.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/center_normal.dir/build.make CMakeFiles/center_normal.dir/clean
+.PHONY : CMakeFiles/center_normal.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/kmeans.dir
@@ -139,7 +115,7 @@ CMakeFiles/tsp.dir/clean:
 CMakeFiles/kmeans.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kmeans.dir/build.make CMakeFiles/kmeans.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kmeans.dir/build.make CMakeFiles/kmeans.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/pointcloud_process/kmeans/build/CMakeFiles --progress-num=3,4 "Built target kmeans"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/pointcloud_process/kmeans/build/CMakeFiles --progress-num=5,6 "Built target kmeans"
 .PHONY : CMakeFiles/kmeans.dir/all
 
 # Build rule for subdir invocation for target.
@@ -159,30 +135,82 @@ CMakeFiles/kmeans.dir/clean:
 .PHONY : CMakeFiles/kmeans.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/center_normal.dir
+# Target rules for target CMakeFiles/tsp.dir
 
 # All Build rule for target.
-CMakeFiles/center_normal.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/center_normal.dir/build.make CMakeFiles/center_normal.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/center_normal.dir/build.make CMakeFiles/center_normal.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/pointcloud_process/kmeans/build/CMakeFiles --progress-num=1,2 "Built target center_normal"
-.PHONY : CMakeFiles/center_normal.dir/all
+CMakeFiles/tsp.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tsp.dir/build.make CMakeFiles/tsp.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tsp.dir/build.make CMakeFiles/tsp.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/pointcloud_process/kmeans/build/CMakeFiles --progress-num=9,10 "Built target tsp"
+.PHONY : CMakeFiles/tsp.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/center_normal.dir/rule: cmake_check_build_system
+CMakeFiles/tsp.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/center_normal.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/tsp.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 0
-.PHONY : CMakeFiles/center_normal.dir/rule
+.PHONY : CMakeFiles/tsp.dir/rule
 
 # Convenience name for target.
-center_normal: CMakeFiles/center_normal.dir/rule
-.PHONY : center_normal
+tsp: CMakeFiles/tsp.dir/rule
+.PHONY : tsp
 
 # clean rule for target.
-CMakeFiles/center_normal.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/center_normal.dir/build.make CMakeFiles/center_normal.dir/clean
-.PHONY : CMakeFiles/center_normal.dir/clean
+CMakeFiles/tsp.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tsp.dir/build.make CMakeFiles/tsp.dir/clean
+.PHONY : CMakeFiles/tsp.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/knn.dir
+
+# All Build rule for target.
+CMakeFiles/knn.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/pointcloud_process/kmeans/build/CMakeFiles --progress-num=7,8 "Built target knn"
+.PHONY : CMakeFiles/knn.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/knn.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/knn.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 0
+.PHONY : CMakeFiles/knn.dir/rule
+
+# Convenience name for target.
+knn: CMakeFiles/knn.dir/rule
+.PHONY : knn
+
+# clean rule for target.
+CMakeFiles/knn.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/clean
+.PHONY : CMakeFiles/knn.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/cec.dir
+
+# All Build rule for target.
+CMakeFiles/cec.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cec.dir/build.make CMakeFiles/cec.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cec.dir/build.make CMakeFiles/cec.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/albert/pointcloud_process/kmeans/build/CMakeFiles --progress-num=1,2 "Built target cec"
+.PHONY : CMakeFiles/cec.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/cec.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cec.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/albert/pointcloud_process/kmeans/build/CMakeFiles 0
+.PHONY : CMakeFiles/cec.dir/rule
+
+# Convenience name for target.
+cec: CMakeFiles/cec.dir/rule
+.PHONY : cec
+
+# clean rule for target.
+CMakeFiles/cec.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cec.dir/build.make CMakeFiles/cec.dir/clean
+.PHONY : CMakeFiles/cec.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

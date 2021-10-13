@@ -117,30 +117,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named knn
+# Target rules for targets named center_normal
 
 # Build rule for target.
-knn: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 knn
-.PHONY : knn
+center_normal: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 center_normal
+.PHONY : center_normal
 
 # fast build rule for target.
-knn/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/build
-.PHONY : knn/fast
-
-#=============================================================================
-# Target rules for targets named tsp
-
-# Build rule for target.
-tsp: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tsp
-.PHONY : tsp
-
-# fast build rule for target.
-tsp/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/tsp.dir/build.make CMakeFiles/tsp.dir/build
-.PHONY : tsp/fast
+center_normal/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/center_normal.dir/build.make CMakeFiles/center_normal.dir/build
+.PHONY : center_normal/fast
 
 #=============================================================================
 # Target rules for targets named kmeans
@@ -156,17 +143,43 @@ kmeans/fast:
 .PHONY : kmeans/fast
 
 #=============================================================================
-# Target rules for targets named center_normal
+# Target rules for targets named tsp
 
 # Build rule for target.
-center_normal: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 center_normal
-.PHONY : center_normal
+tsp: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tsp
+.PHONY : tsp
 
 # fast build rule for target.
-center_normal/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/center_normal.dir/build.make CMakeFiles/center_normal.dir/build
-.PHONY : center_normal/fast
+tsp/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tsp.dir/build.make CMakeFiles/tsp.dir/build
+.PHONY : tsp/fast
+
+#=============================================================================
+# Target rules for targets named knn
+
+# Build rule for target.
+knn: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 knn
+.PHONY : knn
+
+# fast build rule for target.
+knn/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/build
+.PHONY : knn/fast
+
+#=============================================================================
+# Target rules for targets named cec
+
+# Build rule for target.
+cec: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cec
+.PHONY : cec
+
+# fast build rule for target.
+cec/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cec.dir/build.make CMakeFiles/cec.dir/build
+.PHONY : cec/fast
 
 center_normal.o: center_normal.cpp.o
 .PHONY : center_normal.o
@@ -191,6 +204,30 @@ center_normal.s: center_normal.cpp.s
 center_normal.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/center_normal.dir/build.make CMakeFiles/center_normal.dir/center_normal.cpp.s
 .PHONY : center_normal.cpp.s
+
+condition_ec.o: condition_ec.cpp.o
+.PHONY : condition_ec.o
+
+# target to build an object file
+condition_ec.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cec.dir/build.make CMakeFiles/cec.dir/condition_ec.cpp.o
+.PHONY : condition_ec.cpp.o
+
+condition_ec.i: condition_ec.cpp.i
+.PHONY : condition_ec.i
+
+# target to preprocess a source file
+condition_ec.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cec.dir/build.make CMakeFiles/cec.dir/condition_ec.cpp.i
+.PHONY : condition_ec.cpp.i
+
+condition_ec.s: condition_ec.cpp.s
+.PHONY : condition_ec.s
+
+# target to generate assembly for a file
+condition_ec.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cec.dir/build.make CMakeFiles/cec.dir/condition_ec.cpp.s
+.PHONY : condition_ec.cpp.s
 
 kmeans.o: kmeans.cpp.o
 .PHONY : kmeans.o
@@ -272,6 +309,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... cec"
 	@echo "... center_normal"
 	@echo "... kmeans"
 	@echo "... knn"
@@ -279,6 +317,9 @@ help:
 	@echo "... center_normal.o"
 	@echo "... center_normal.i"
 	@echo "... center_normal.s"
+	@echo "... condition_ec.o"
+	@echo "... condition_ec.i"
+	@echo "... condition_ec.s"
 	@echo "... kmeans.o"
 	@echo "... kmeans.i"
 	@echo "... kmeans.s"
