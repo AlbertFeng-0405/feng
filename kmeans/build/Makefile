@@ -181,6 +181,19 @@ cec/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cec.dir/build.make CMakeFiles/cec.dir/build
 .PHONY : cec/fast
 
+#=============================================================================
+# Target rules for targets named visual
+
+# Build rule for target.
+visual: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 visual
+.PHONY : visual
+
+# fast build rule for target.
+visual/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/visual.dir/build.make CMakeFiles/visual.dir/build
+.PHONY : visual/fast
+
 center_normal.o: center_normal.cpp.o
 .PHONY : center_normal.o
 
@@ -277,6 +290,30 @@ knn_4_normal.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/knn.dir/build.make CMakeFiles/knn.dir/knn_4_normal.cpp.s
 .PHONY : knn_4_normal.cpp.s
 
+pc_vis.o: pc_vis.cpp.o
+.PHONY : pc_vis.o
+
+# target to build an object file
+pc_vis.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/visual.dir/build.make CMakeFiles/visual.dir/pc_vis.cpp.o
+.PHONY : pc_vis.cpp.o
+
+pc_vis.i: pc_vis.cpp.i
+.PHONY : pc_vis.i
+
+# target to preprocess a source file
+pc_vis.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/visual.dir/build.make CMakeFiles/visual.dir/pc_vis.cpp.i
+.PHONY : pc_vis.cpp.i
+
+pc_vis.s: pc_vis.cpp.s
+.PHONY : pc_vis.s
+
+# target to generate assembly for a file
+pc_vis.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/visual.dir/build.make CMakeFiles/visual.dir/pc_vis.cpp.s
+.PHONY : pc_vis.cpp.s
+
 prepare_tsp.o: prepare_tsp.cpp.o
 .PHONY : prepare_tsp.o
 
@@ -314,6 +351,7 @@ help:
 	@echo "... kmeans"
 	@echo "... knn"
 	@echo "... tsp"
+	@echo "... visual"
 	@echo "... center_normal.o"
 	@echo "... center_normal.i"
 	@echo "... center_normal.s"
@@ -326,6 +364,9 @@ help:
 	@echo "... knn_4_normal.o"
 	@echo "... knn_4_normal.i"
 	@echo "... knn_4_normal.s"
+	@echo "... pc_vis.o"
+	@echo "... pc_vis.i"
+	@echo "... pc_vis.s"
 	@echo "... prepare_tsp.o"
 	@echo "... prepare_tsp.i"
 	@echo "... prepare_tsp.s"

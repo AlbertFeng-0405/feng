@@ -15,6 +15,8 @@
 #include <Eigen/Eigenvalues>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <set>
 
 bool
 customRegionGrowing (const pcl::PointXYZINormal& seedPoint, const pcl::PointXYZINormal& candidatePoint, float squared_distance)
@@ -93,6 +95,20 @@ void cal_eigen_direction(pcl::PointCloud<pcl::PointXYZI>::Ptr cloud, Eigen::Vect
     main_direction = v;
 }
 
+void cal_angle(Eigen::Vector3f direc, Eigen::Vector3f point, float& angle){
+    float cosValNew=direc.dot(point) /(direc.norm()*point.norm()); 
+    angle = acos(cosValNew) * 180 / M_PI;     
+}
+
+void cal_radius(pcl::PointCloud<pcl::PointXYZI>::Ptr cal_cloud, Eigen::Vector4f& centroid,float& r){					
+	pcl::compute3DCentroid(*cal_cloud, centroid);
+    Eigen::Vector4f max_pt;
+    pcl::getMaxDistance(*cal_cloud, centroid, max_pt);// get most remote point in cloud and calculate the distance
+    Eigen::Vector4f distance=max_pt-centroid;
+    r = distance.norm();
+}
+
+
 int main(int argc, char** argv)
 {
     std::string pcd_name = "/home/albert/obj_model/house_obj/house/textures/house_fill_p.pcd";
@@ -102,6 +118,7 @@ int main(int argc, char** argv)
     pcl::PointCloud<pcl::PointXYZI>::Ptr after_cloud (new pcl::PointCloud<pcl::PointXYZI>);
     pcl::PointCloud<pcl::PointXYZI>::Ptr inner_cloud (new pcl::PointCloud<pcl::PointXYZI>);
     pcl::PointCloud<pcl::PointXYZI>::Ptr corner_cloud (new pcl::PointCloud<pcl::PointXYZI>);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr vis_cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZINormal>::Ptr cloud_normals (new pcl::PointCloud<pcl::PointXYZINormal>);
     pcl::IndicesClustersPtr clusters (new pcl::IndicesClusters), small_clusters (new pcl::IndicesClusters), large_clusters (new pcl::IndicesClusters);
     pcl::search::KdTree<pcl::PointXYZI>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZI> ());
@@ -153,7 +170,7 @@ int main(int argc, char** argv)
 
     for (int i = 0; i < clusters->size (); i++)
   {
-    int label = rand () % 60;
+    int label = i+1;//rand () % 60;
     intensity_label.push_back(label);
     pcl::PointCloud<pcl::PointXYZI>::Ptr temp_cloud (new pcl::PointCloud<pcl::PointXYZI>);
     temp_cloud->clear();
@@ -172,9 +189,6 @@ int main(int argc, char** argv)
     point.intensity = label;
     center_cloud->push_back(point);
   }
-
-  std::cout<<"center_pt: " <<center_cloud->points.size()<<std::endl;
-  std::cout<<"label: " <<intensity_label.size()<<std::endl;
 
     for (int i = 0; i < clusters->size (); ++i){//clusters->size ()
         for (int j = 0; j < (*clusters)[i].indices.size (); ++j){
@@ -195,43 +209,138 @@ int main(int argc, char** argv)
         inner_cloud->push_back(corner_cloud->points[i]);
     }
 
-    int divide_flag=0;
-    int too_small=0;
+    std::vector<int> real_label_list;
     for(int j=0; j<intensity_label.size();j++){
+        std::cout<<"label!!!!!!!!!!!!!!!!!!!: " <<intensity_label[j]<<std::endl;
+        int old_label = intensity_label[j];
         pcl::PointCloud<pcl::PointXYZI>::Ptr temp_cluster_cloud (new pcl::PointCloud<pcl::PointXYZI>);
         temp_cluster_cloud->clear();
+        pcl::PointCloud<pcl::PointXYZI>::Ptr externel_cloud (new pcl::PointCloud<pcl::PointXYZI>);
+        externel_cloud->clear();
+        std::vector<int> index;
+
         for(int i=0; i<inner_cloud->points.size();++i){
             if(inner_cloud->points[i].intensity == intensity_label[j]){
                 temp_cluster_cloud->push_back(inner_cloud->points[i]);
+                index.push_back(i);
+            }
+            else{
+                externel_cloud->push_back(inner_cloud->points[i]);
             }
         }
         std::cout << "temp: " << temp_cluster_cloud->points.size() <<std::endl;
+        std::cout << "temp: " << index.size() <<std::endl;
         Eigen::Vector4f cen;					
-	    pcl::compute3DCentroid(*temp_cluster_cloud, cen);
-        Eigen::Vector4f max_pt;
-        pcl::getMaxDistance(*temp_cluster_cloud, cen, max_pt);// get most remote point in cloud and calculate the distance
-        Eigen::Vector4f distance=max_pt-cen;
-        float radius = distance.norm();
+        float radius;
+        cal_radius(temp_cluster_cloud, cen, radius);
         std::cout << "radius: " << radius <<std::endl;
-        if(radius>25.0){
-            divide_flag+=1;
-            Eigen::Vector3f direction;
-            cal_eigen_direction(temp_cluster_cloud, cen, direction);
-            std::cout << "main_direction: " << direction <<std::endl;
-        }
+    
         if(radius<15.0){
-            too_small+=1;
+            std::vector<int> near_idx;
+            pcl::PointXYZI point;
+            point.x = cen(0);
+            point.y = cen(1);
+            point.z = cen(2);
+            knn(externel_cloud, point, near_idx);
+            for(int i=0;i<index.size();++i){
+                inner_cloud->points[index[i]].intensity = externel_cloud->points[near_idx[0]].intensity;
+            }
         }
-
+        else{
+            real_label_list.push_back(intensity_label[j]);
+        }
         
     }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    for(int j=0; j<real_label_list.size();j++){
+        std::cout<<"label!!!!!!!!!!!!!!!!!!!: " <<real_label_list[j]<<std::endl;
+        pcl::PointCloud<pcl::PointXYZI>::Ptr temp_cluster_cloud_l (new pcl::PointCloud<pcl::PointXYZI>);
+        temp_cluster_cloud_l->clear();
+        std::vector<int> index_l;
 
-    std::cout << "waiting_process: " << divide_flag <<std::endl;
-    std::cout << "too_small: " << too_small <<std::endl;
+        for(int i=0; i<inner_cloud->points.size();++i){
+            if(inner_cloud->points[i].intensity == real_label_list[j]){
+                temp_cluster_cloud_l->push_back(inner_cloud->points[i]);
+                index_l.push_back(i);
+            }
+        }
+        if (temp_cluster_cloud_l->points.size()>0){
+            Eigen::Vector4f cen_l;			
+            float radius_l;
+            cal_radius(temp_cluster_cloud_l, cen_l, radius_l);
+            std::cout << "radius: " << radius_l <<std::endl;
+            if (radius_l>25.0){
+                int new_label_1 = real_label_list[j]+109;
+                int new_label_2 = real_label_list[j]+2211;
+                Eigen::Vector3f direction;
+                cal_eigen_direction(temp_cluster_cloud_l, cen_l, direction);
+                for(int i=0;i<index_l.size();++i)
+                {
+                float temp_angle;
+                Eigen::Vector3f pt_2_cen(inner_cloud->points[index_l[i]].x-cen_l(0), inner_cloud->points[index_l[i]].y-cen_l(1), inner_cloud->points[index_l[i]].z-cen_l(2));
+                cal_angle(direction, pt_2_cen, temp_angle);
+                if (temp_angle < 90.0){
+                    inner_cloud->points[index_l[i]].intensity = new_label_1;
+                }
+                else{
+                    inner_cloud->points[index_l[i]].intensity = new_label_2;
+                }
+                }
+                real_label_list.push_back(new_label_1);
+                real_label_list.push_back(new_label_2);
+            }
+        }
+        
+        index_l.clear();
+        
+    }
     std::cerr << ">> Done: " << tt.toc () << " ms\n";
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    std::vector<int> new_label_list;
+    for(int j=0; j<real_label_list.size();j++){
+        pcl::PointCloud<pcl::PointXYZI>::Ptr temp_cluster_cloud_f (new pcl::PointCloud<pcl::PointXYZI>);
+        temp_cluster_cloud_f->clear();
+        std::vector<int> index_f;
+
+        for(int i=0; i<inner_cloud->points.size();++i){
+            if(inner_cloud->points[i].intensity == real_label_list[j]){
+                temp_cluster_cloud_f->push_back(inner_cloud->points[i]);
+                index_f.push_back(i);
+            }
+        }
+        if (temp_cluster_cloud_f->points.size()>0){
+            Eigen::Vector4f cen_f;			
+            float radius_f;
+            cal_radius(temp_cluster_cloud_f, cen_f, radius_f);
+            std::cout << "radius: " << radius_f <<std::endl;
+            new_label_list.push_back(real_label_list[j]);}
+    }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    for(int j=0;j<new_label_list.size();++j){
+        int r = (rand() % (255+1));
+        int g = (rand() % (255+1));
+        int b = (rand() % (255+1));
+        for(int i=0; i<inner_cloud->points.size();++i){
+            if(inner_cloud->points[i].intensity == new_label_list[j]){
+                pcl::PointXYZRGB vis_point;
+                vis_point.x=inner_cloud->points[i].x;
+                vis_point.y=inner_cloud->points[i].y;
+                vis_point.z=inner_cloud->points[i].z;
+                vis_point.r=r;
+                vis_point.g=g;
+                vis_point.b=b;
+                vis_cloud->push_back(vis_point);
+            }
+        }
+    }
+
+    std::cout<<"label: " <<intensity_label.size()<<std::endl;
+    std::cout<<"real_label: " <<real_label_list.size()<<std::endl;
+    std::cout<<"final_label: " <<new_label_list.size()<<std::endl;
 
     pcl::io::savePCDFile ("plane.pcd", *inner_cloud);
     pcl::io::savePCDFile ("corner.pcd", *corner_cloud);
+    pcl::io::savePCDFile ("vis.pcd", *vis_cloud);
 
     return (0);
 }

@@ -260,4 +260,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/tsp.dir/DependInfo.cmake"
   "CMakeFiles/knn.dir/DependInfo.cmake"
   "CMakeFiles/cec.dir/DependInfo.cmake"
+  "CMakeFiles/visual.dir/DependInfo.cmake"
   )
