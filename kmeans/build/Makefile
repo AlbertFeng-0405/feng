@@ -143,6 +143,19 @@ kmeans/fast:
 .PHONY : kmeans/fast
 
 #=============================================================================
+# Target rules for targets named ds
+
+# Build rule for target.
+ds: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ds
+.PHONY : ds
+
+# fast build rule for target.
+ds/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ds.dir/build.make CMakeFiles/ds.dir/build
+.PHONY : ds/fast
+
+#=============================================================================
 # Target rules for targets named tsp
 
 # Build rule for target.
@@ -241,6 +254,30 @@ condition_ec.s: condition_ec.cpp.s
 condition_ec.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cec.dir/build.make CMakeFiles/cec.dir/condition_ec.cpp.s
 .PHONY : condition_ec.cpp.s
+
+dual_sampling.o: dual_sampling.cpp.o
+.PHONY : dual_sampling.o
+
+# target to build an object file
+dual_sampling.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ds.dir/build.make CMakeFiles/ds.dir/dual_sampling.cpp.o
+.PHONY : dual_sampling.cpp.o
+
+dual_sampling.i: dual_sampling.cpp.i
+.PHONY : dual_sampling.i
+
+# target to preprocess a source file
+dual_sampling.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ds.dir/build.make CMakeFiles/ds.dir/dual_sampling.cpp.i
+.PHONY : dual_sampling.cpp.i
+
+dual_sampling.s: dual_sampling.cpp.s
+.PHONY : dual_sampling.s
+
+# target to generate assembly for a file
+dual_sampling.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ds.dir/build.make CMakeFiles/ds.dir/dual_sampling.cpp.s
+.PHONY : dual_sampling.cpp.s
 
 kmeans.o: kmeans.cpp.o
 .PHONY : kmeans.o
@@ -348,6 +385,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... cec"
 	@echo "... center_normal"
+	@echo "... ds"
 	@echo "... kmeans"
 	@echo "... knn"
 	@echo "... tsp"
@@ -358,6 +396,9 @@ help:
 	@echo "... condition_ec.o"
 	@echo "... condition_ec.i"
 	@echo "... condition_ec.s"
+	@echo "... dual_sampling.o"
+	@echo "... dual_sampling.i"
+	@echo "... dual_sampling.s"
 	@echo "... kmeans.o"
 	@echo "... kmeans.i"
 	@echo "... kmeans.s"

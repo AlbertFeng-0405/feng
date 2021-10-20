@@ -257,6 +257,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/center_normal.dir/DependInfo.cmake"
   "CMakeFiles/kmeans.dir/DependInfo.cmake"
+  "CMakeFiles/ds.dir/DependInfo.cmake"
   "CMakeFiles/tsp.dir/DependInfo.cmake"
   "CMakeFiles/knn.dir/DependInfo.cmake"
   "CMakeFiles/cec.dir/DependInfo.cmake"

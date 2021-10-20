@@ -2351,4 +2351,7 @@ CMakeFiles/cec.dir/condition_ec.cpp.o
  /usr/local/include/eigen3/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h
  /usr/local/include/eigen3/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h
  /usr/local/include/eigen3/Eigen/src/IterativeLinearSolvers/IncompleteCholesky.h
+ /usr/include/pcl-1.8/pcl/filters/uniform_sampling.h
+ /usr/include/pcl-1.8/pcl/filters/statistical_outlier_removal.h
+ /usr/include/pcl-1.8/pcl/filters/filter_indices.h
 

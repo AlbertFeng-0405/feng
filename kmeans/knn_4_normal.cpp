@@ -130,10 +130,11 @@ int main()
     pcl::PointCloud<pcl::PointXYZ>::Ptr process_cloud (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr after_cloud (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::Normal>::Ptr cloud_normals (new pcl::PointCloud<pcl::Normal>);
+    pcl::PointCloud<pcl::PointXYZINormal>::Ptr cloud_4_cluster (new pcl::PointCloud<pcl::PointXYZINormal>);
     pcl::io::loadPCDFile<pcl::PointXYZ>(pcd_name,*process_cloud);
-    std::ofstream OutFile("/home/albert/pointcloud_process/kmeans/build/pc_test.txt");
+    // std::ofstream OutFile("/home/albert/pointcloud_process/kmeans/build/pc_test.txt");
 
-    float search_radius = 5.0;
+    float search_radius = 1.0;
 
     pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
     ne.setInputCloud (process_cloud);
@@ -148,10 +149,10 @@ int main()
     srand((unsigned)time(NULL));
     int test = 250;//(rand() % (end+1));
 
-    for (int i=0;i<end;i = i+50)
+    for (int i=0;i<end;++i)
     {
     int process_id = i;
-    if(process_cloud->points[process_id].y > -40.0){
+    if(process_cloud->points[process_id].y > -47.0){
     std::vector<int> neighberID;
 
     knn(process_cloud, process_id, neighberID);
@@ -192,7 +193,7 @@ int main()
         cal_nearest_pt_random(process_cloud, waiting_2, focus_pt, mp, surf_distance_2);
         judge_i_o(surf_distance_2, polar_2);
         }
-        else if (cal>=500 && cal<1000){
+        else if (cal>=500 && cal<800){
             mp = 45.0;
             polar_1 = 0;
             polar_2 = 0;
@@ -204,7 +205,7 @@ int main()
             cal_nearest_pt_random(process_cloud, waiting_2, focus_pt, mp, surf_distance_2);
             judge_i_o(surf_distance_2, polar_2);
         }
-        else if(cal>=1000){
+        else if(cal>=800){
             undiscri += 1;
             std::cout << "id: " << i << std::endl;
             break;
@@ -212,14 +213,14 @@ int main()
         cal += 1;
     }
 
-    for(int i=0; i<surf_distance_1.size();i++){
-      std::cout << "dis: "<<surf_distance_1[i] << std::endl;
-    }
-    std::cout<<"--------------------------------------------------- "<<std::endl;
+    // for(int i=0; i<surf_distance_1.size();i++){
+    //   std::cout << "dis: "<<surf_distance_1[i] << std::endl;
+    // }
+    // std::cout<<"--------------------------------------------------- "<<std::endl;
 
-    for(int i=0; i<surf_distance_2.size();i++){
-      std::cout << "dis: "<<surf_distance_2[i] << std::endl;
-    }
+    // for(int i=0; i<surf_distance_2.size();i++){
+    //   std::cout << "dis: "<<surf_distance_2[i] << std::endl;
+    // }
     std::cout<<"polar_1: "<<polar_1<<std::endl;
     std::cout<<"polar_2: "<<polar_2<<std::endl;
     std::cout << "cal: " << cal << std::endl;
@@ -259,17 +260,29 @@ int main()
         v_1.push_back(waiting_2(1));
         v_1.push_back(waiting_2(2));
     }
+
+    pcl::PointXYZINormal normal_point;
+    normal_point.x = v_1[0];
+    normal_point.y = v_1[1];
+    normal_point.z = v_1[2];
+    normal_point.normal_x = v_1[3];
+    normal_point.normal_y = v_1[4];
+    normal_point.normal_z = v_1[5];
+
+    cloud_4_cluster->push_back(normal_point);
+    std::cout << "normal_id: " << i << std::endl;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::stringstream ce;
-    std::copy(v_1.begin(), v_1.end(), std::ostream_iterator<float>(ce, " "));
+    // std::stringstream ce;
+    // std::copy(v_1.begin(), v_1.end(), std::ostream_iterator<float>(ce, " "));
 
-    OutFile << ce.str().c_str();
-    OutFile << std::endl;
+    // OutFile << ce.str().c_str();
+    // OutFile << std::endl;
     }
     }
-    OutFile.close();
-    std::cout<<"test_id: "<<test<<std::endl;
+    // OutFile.close();
+    // std::cout<<"test_id: "<<test<<std::endl;
+    pcl::io::savePCDFile ("pt_plus_normal.pcd", *cloud_4_cluster);
 
     return 0;
     
